@@ -169,7 +169,7 @@ class AnimeKai extends models_1.AnimeParser {
                     throw new Error(`Server ${server} not found`);
                 }
                 const serverUrl = new URL(servers[i].url);
-                const sources = await this.fetchEpisodeSources(serverUrl.href, server, subOrDub);
+                const sources = await this.fetchEpisodeSources(serverUrl.href, server, subOrDub, customDecoder);
                 sources.intro = (_a = servers[i]) === null || _a === void 0 ? void 0 : _a.intro;
                 sources.outro = (_b = servers[i]) === null || _b === void 0 ? void 0 : _b.outro;
                 return sources;
