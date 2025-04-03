@@ -60,44 +60,14 @@ class MegaUp extends models_1.VideoExtractor {
             return decodeURIComponent(n);
         };
         this.Decode = (n) => {
-            n = __classPrivateFieldGet(this, _MegaUp_transform, "f").call(this, "A6mkJw3XMsruY", 
-                __classPrivateFieldGet(this, _MegaUp_base64UrlDecode, "f").call(this, 
-                    __classPrivateFieldGet(this, _MegaUp_substitute, "f").call(this, 
-                        __classPrivateFieldGet(this, _MegaUp_reverseIt, "f").call(this, 
-                            __classPrivateFieldGet(this, _MegaUp_reverseIt, "f").call(this, 
-                                __classPrivateFieldGet(this, _MegaUp_transform, "f").call(this, "Sv7tijKFrwDxsl9", 
-                                    __classPrivateFieldGet(this, _MegaUp_base64UrlDecode, "f").call(this, 
-                                        __classPrivateFieldGet(this, _MegaUp_substitute, "f").call(this, 
-                                            __classPrivateFieldGet(this, _MegaUp_transform, "f").call(this, "j8971KLwSyI", 
-                                                __classPrivateFieldGet(this, _MegaUp_base64UrlDecode, "f").call(this, 
-                                                    __classPrivateFieldGet(this, _MegaUp_reverseIt, "f").call(this, 
-                                                        __classPrivateFieldGet(this, _MegaUp_substitute, "f").call(this, 
-                                                            __classPrivateFieldGet(this, _MegaUp_base64UrlDecode, "f").call(this, n), 
-                                                            "kxV4iJtRZg3", 
-                                                            "VJx34RtgkZi"
-                                                        )
-                                                    )
-                                                )
-                                            ), 
-                                            "BjZ9dF6AxHTqn", 
-                                            "jxqZdB6n9FTHA"
-                                        )
-                                    )
-                                )
-                            )
-                        ), 
-                        "FpPBdhzCyGYoDvO", 
-                        "YGFpvoBdCyDPhzO"
-                    )
-                )
-            );
+            n = __classPrivateFieldGet(this, _MegaUp_transform, "f").call(this, 'A6mkJw3XMsruY', __classPrivateFieldGet(this, _MegaUp_base64UrlDecode, "f").call(this, __classPrivateFieldGet(this, _MegaUp_substitute, "f").call(this, __classPrivateFieldGet(this, _MegaUp_reverseIt, "f").call(this, __classPrivateFieldGet(this, _MegaUp_reverseIt, "f").call(this, __classPrivateFieldGet(this, _MegaUp_transform, "f").call(this, 'Sv7tijKFrwDxsl9', __classPrivateFieldGet(this, _MegaUp_base64UrlDecode, "f").call(this, __classPrivateFieldGet(this, _MegaUp_substitute, "f").call(this, __classPrivateFieldGet(this, _MegaUp_transform, "f").call(this, 'j8971KLwSyI', __classPrivateFieldGet(this, _MegaUp_base64UrlDecode, "f").call(this, __classPrivateFieldGet(this, _MegaUp_reverseIt, "f").call(this, __classPrivateFieldGet(this, _MegaUp_substitute, "f").call(this, __classPrivateFieldGet(this, _MegaUp_base64UrlDecode, "f").call(this, `${n}`), 'kxV4iJtRZg3', 'VJx34RtgkZi')))), 'BjZ9dF6AxHTqn', 'jxqZdB6n9FTHA'))))), 'FpPBdhzCyGYoDvO', 'YGFpvoBdCyDPhzO')));
             return decodeURIComponent(n);
         };
-        this.extract = async (videoUrl) => {
+        this.extract = async (videoUrl, customDecoder) => {
             try {
                 const url = videoUrl.href.replace(/\/(e|e2)\//, '/media/');
                 const res = await this.client.get(url);
-                const decrypted = JSON.parse(this.Decode(res.data.result).replace(/\\/g, ''));
+                const decrypted = JSON.parse((customDecoder ? customDecoder(res.data.result) : this.Decode(res.data.result)).replace(/\\/g, ''));
                 const data = {
                     sources: decrypted.sources.map((s) => ({
                         url: s.file,

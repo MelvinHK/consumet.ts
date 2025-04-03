@@ -145,7 +145,7 @@ class AnimeKai extends models_1.AnimeParser {
          * @param server server type (default `VidCloud`) (optional)
          * @param subOrDub sub or dub (default `SubOrSub.SUB`) (optional)
          */
-        this.fetchEpisodeSources = async (episodeId, server = models_1.StreamingServers.MegaUp, subOrDub = models_1.SubOrSub.SUB) => {
+        this.fetchEpisodeSources = async (episodeId, server = models_1.StreamingServers.MegaUp, subOrDub = models_1.SubOrSub.SUB, customDecoder) => {
             var _a, _b;
             if (episodeId.startsWith('http')) {
                 const serverUrl = new URL(episodeId);
@@ -153,12 +153,12 @@ class AnimeKai extends models_1.AnimeParser {
                     case models_1.StreamingServers.MegaUp:
                         return {
                             headers: { Referer: serverUrl.href },
-                            ...(await new utils_1.MegaUp(this.proxyConfig, this.adapter).extract(serverUrl)),
+                            ...(await new utils_1.MegaUp(this.proxyConfig, this.adapter).extract(serverUrl, customDecoder)),
                         };
                     default:
                         return {
                             headers: { Referer: serverUrl.href },
-                            ...(await new utils_1.MegaUp(this.proxyConfig, this.adapter).extract(serverUrl)),
+                            ...(await new utils_1.MegaUp(this.proxyConfig, this.adapter).extract(serverUrl, customDecoder)),
                         };
                 }
             }

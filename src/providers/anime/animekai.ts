@@ -448,7 +448,8 @@ class AnimeKai extends AnimeParser {
   override fetchEpisodeSources = async (
     episodeId: string,
     server: StreamingServers = StreamingServers.MegaUp,
-    subOrDub: SubOrSub = SubOrSub.SUB
+    subOrDub: SubOrSub = SubOrSub.SUB,
+    customDecoder?: (n: string) => string
   ): Promise<ISource> => {
     if (episodeId.startsWith('http')) {
       const serverUrl = new URL(episodeId);
@@ -456,12 +457,12 @@ class AnimeKai extends AnimeParser {
         case StreamingServers.MegaUp:
           return {
             headers: { Referer: serverUrl.href },
-            ...(await new MegaUp(this.proxyConfig, this.adapter).extract(serverUrl)),
+            ...(await new MegaUp(this.proxyConfig, this.adapter).extract(serverUrl, customDecoder)),
           };
         default:
           return {
             headers: { Referer: serverUrl.href },
-            ...(await new MegaUp(this.proxyConfig, this.adapter).extract(serverUrl)),
+            ...(await new MegaUp(this.proxyConfig, this.adapter).extract(serverUrl, customDecoder)),
           };
       }
     }

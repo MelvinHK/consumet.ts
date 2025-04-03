@@ -69,7 +69,7 @@ declare class AnimeKai extends AnimeParser {
      * @param server server type (default `VidCloud`) (optional)
      * @param subOrDub sub or dub (default `SubOrSub.SUB`) (optional)
      */
-    fetchEpisodeSources: (episodeId: string, server?: StreamingServers, subOrDub?: SubOrSub) => Promise<ISource>;
+    fetchEpisodeSources: (episodeId: string, server?: StreamingServers, subOrDub?: SubOrSub, customDecoder?: (n: string) => string) => Promise<ISource>;
     /**
      * @param url string
      */

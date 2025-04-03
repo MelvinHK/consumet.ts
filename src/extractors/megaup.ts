@@ -114,47 +114,45 @@ export class MegaUp extends VideoExtractor {
   };
   Decode = (n: string) => {
     n = this.#transform(
-      "A6mkJw3XMsruY", 
+      'A6mkJw3XMsruY',
       this.#base64UrlDecode(
         this.#substitute(
           this.#reverseIt(
             this.#reverseIt(
               this.#transform(
-                "Sv7tijKFrwDxsl9", 
+                'Sv7tijKFrwDxsl9',
                 this.#base64UrlDecode(
                   this.#substitute(
                     this.#transform(
-                      "j8971KLwSyI", 
+                      'j8971KLwSyI',
                       this.#base64UrlDecode(
                         this.#reverseIt(
-                          this.#substitute(
-                            this.#base64UrlDecode(`${n}`), 
-                            "kxV4iJtRZg3", 
-                            "VJx34RtgkZi"
-                          )
+                          this.#substitute(this.#base64UrlDecode(`${n}`), 'kxV4iJtRZg3', 'VJx34RtgkZi')
                         )
                       )
-                    ), 
-                    "BjZ9dF6AxHTqn", 
-                    "jxqZdB6n9FTHA"
+                    ),
+                    'BjZ9dF6AxHTqn',
+                    'jxqZdB6n9FTHA'
                   )
                 )
               )
             )
-          ), 
-          "FpPBdhzCyGYoDvO", 
-          "YGFpvoBdCyDPhzO"
+          ),
+          'FpPBdhzCyGYoDvO',
+          'YGFpvoBdCyDPhzO'
         )
       )
     );
     return decodeURIComponent(n);
   };
-  override extract = async (videoUrl: URL): Promise<ISource> => {
+  override extract = async (videoUrl: URL, customDecoder?: (n: string) => string): Promise<ISource> => {
     try {
       const url = videoUrl.href.replace(/\/(e|e2)\//, '/media/');
       const res = await this.client.get(url);
 
-      const decrypted = JSON.parse(this.Decode(res.data.result).replace(/\\/g, ''));
+      const decrypted = JSON.parse(
+        (customDecoder ? customDecoder(res.data.result) : this.Decode(res.data.result)).replace(/\\/g, '')
+      );
       const data: ISource = {
         sources: decrypted.sources.map((s: { file: string }) => ({
           url: s.file,

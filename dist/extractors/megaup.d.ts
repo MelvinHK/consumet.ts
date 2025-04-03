@@ -6,5 +6,5 @@ export declare class MegaUp extends VideoExtractor {
     GenerateToken: (n: string) => string;
     DecodeIframeData: (n: string) => string;
     Decode: (n: string) => string;
-    extract: (videoUrl: URL) => Promise<ISource>;
+    extract: (videoUrl: URL, customDecoder?: (n: string) => string) => Promise<ISource>;
 }
