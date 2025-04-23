@@ -14,8 +14,8 @@ class AnimeKai extends models_1.AnimeParser {
         /**
          * @param id Anime id
          */
-        this.fetchAnimeInfo = async (id) => {
-            var _a;
+        this.fetchAnimeInfo = async (id, customTokenGenerator) => {
+            var _a, _b;
             const info = {
                 id: id,
                 title: '',
@@ -104,7 +104,7 @@ class AnimeKai extends models_1.AnimeParser {
                 }
                 info.season = $('.entity-scroll > .detail').find("div:contains('Premiered') > span").text().trim();
                 const ani_id = $('.rate-box#anime-rating').attr('data-id');
-                const episodesAjax = await this.client.get(`${this.baseUrl}/ajax/episodes/list?ani_id=${ani_id}&_=${GenerateToken(ani_id)}`, {
+                const episodesAjax = await this.client.get(`${this.baseUrl}/ajax/episodes/list?ani_id=${ani_id}&_=${(_b = customTokenGenerator === null || customTokenGenerator === void 0 ? void 0 : customTokenGenerator(ani_id)) !== null && _b !== void 0 ? _b : GenerateToken(ani_id)}`, {
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',
                         Referer: `${this.baseUrl}/watch/${id}`,

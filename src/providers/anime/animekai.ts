@@ -301,7 +301,10 @@ class AnimeKai extends AnimeParser {
   /**
    * @param id Anime id
    */
-  override fetchAnimeInfo = async (id: string): Promise<IAnimeInfo> => {
+  override fetchAnimeInfo = async (
+    id: string,
+    customTokenGenerator?: (n: string) => string
+  ): Promise<IAnimeInfo> => {
     const info: IAnimeInfo = {
       id: id,
       title: '',
@@ -399,7 +402,9 @@ class AnimeKai extends AnimeParser {
 
       const ani_id = $('.rate-box#anime-rating').attr('data-id');
       const episodesAjax = await this.client.get(
-        `${this.baseUrl}/ajax/episodes/list?ani_id=${ani_id}&_=${GenerateToken(ani_id!)}`,
+        `${this.baseUrl}/ajax/episodes/list?ani_id=${ani_id}&_=${
+          customTokenGenerator?.(ani_id!) ?? GenerateToken(ani_id!)
+        }`,
         {
           headers: {
             'X-Requested-With': 'XMLHttpRequest',

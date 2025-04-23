@@ -62,7 +62,7 @@ declare class AnimeKai extends AnimeParser {
     /**
      * @param id Anime id
      */
-    fetchAnimeInfo: (id: string) => Promise<IAnimeInfo>;
+    fetchAnimeInfo: (id: string, customTokenGenerator?: (n: string) => string) => Promise<IAnimeInfo>;
     /**
      *
      * @param episodeId Episode id
