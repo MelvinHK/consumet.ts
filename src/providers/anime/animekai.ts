@@ -454,7 +454,8 @@ class AnimeKai extends AnimeParser {
     episodeId: string,
     server: StreamingServers = StreamingServers.MegaUp,
     subOrDub: SubOrSub = SubOrSub.SUB,
-    customDecoder?: (n: string) => string
+    customDecoder?: (n: string) => string,
+    customTokenGenerator?: (n: string) => string
   ): Promise<ISource> => {
     if (episodeId.startsWith('http')) {
       const serverUrl = new URL(episodeId);
@@ -473,7 +474,7 @@ class AnimeKai extends AnimeParser {
     }
 
     try {
-      const servers = await this.fetchEpisodeServers(episodeId, subOrDub);
+      const servers = await this.fetchEpisodeServers(episodeId, subOrDub, customTokenGenerator);
       const i = servers.findIndex(s => s.name.toLowerCase().includes(server)); //for now only megaup is available, hence directly using it
 
       if (i === -1) {
@@ -575,12 +576,13 @@ class AnimeKai extends AnimeParser {
    */
   override fetchEpisodeServers = async (
     episodeId: string,
-    subOrDub: SubOrSub = SubOrSub.SUB
+    subOrDub: SubOrSub = SubOrSub.SUB,
+    customTokenGenerator?: (n: string) => string
   ): Promise<IEpisodeServer[]> => {
     if (!episodeId.startsWith(this.baseUrl + '/ajax'))
-      episodeId = `${this.baseUrl}/ajax/links/list?token=${episodeId.split('$token=')[1]}&_=${GenerateToken(
-        episodeId.split('$token=')[1]
-      )}`;
+      episodeId = `${this.baseUrl}/ajax/links/list?token=${episodeId.split('$token=')[1]}&_=${
+        customTokenGenerator?.(episodeId.split('$token=')[1]) ?? GenerateToken(episodeId.split('$token=')[1])
+      }`;
     try {
       const { data } = await this.client.get(episodeId, { headers: this.Headers() });
       const $ = load(data.result);
@@ -590,7 +592,7 @@ class AnimeKai extends AnimeParser {
         serverItems.map(async (i, server) => {
           const id = $(server).attr('data-lid');
           const { data } = await this.client.get(
-            `${this.baseUrl}/ajax/links/view?id=${id}&_=${GenerateToken(id!)}`,
+            `${this.baseUrl}/ajax/links/view?id=${id}&_=${customTokenGenerator?.(id!) ?? GenerateToken(id!)}`,
             { headers: this.Headers() }
           );
           const decodedData = JSON.parse(DecodeIframeData(data.result));
