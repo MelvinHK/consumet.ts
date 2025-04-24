@@ -455,7 +455,8 @@ class AnimeKai extends AnimeParser {
     server: StreamingServers = StreamingServers.MegaUp,
     subOrDub: SubOrSub = SubOrSub.SUB,
     customDecoder?: (n: string) => string,
-    customTokenGenerator?: (n: string) => string
+    customTokenGenerator?: (n: string) => string,
+    customIframeDecoder?: (n: string) => string
   ): Promise<ISource> => {
     if (episodeId.startsWith('http')) {
       const serverUrl = new URL(episodeId);
@@ -474,7 +475,12 @@ class AnimeKai extends AnimeParser {
     }
 
     try {
-      const servers = await this.fetchEpisodeServers(episodeId, subOrDub, customTokenGenerator);
+      const servers = await this.fetchEpisodeServers(
+        episodeId,
+        subOrDub,
+        customTokenGenerator,
+        customIframeDecoder
+      );
       const i = servers.findIndex(s => s.name.toLowerCase().includes(server)); //for now only megaup is available, hence directly using it
 
       if (i === -1) {
@@ -487,7 +493,8 @@ class AnimeKai extends AnimeParser {
         server,
         subOrDub,
         customDecoder,
-        customTokenGenerator
+        customTokenGenerator,
+        customIframeDecoder
       );
       sources.intro = servers[i]?.intro as Intro;
       sources.outro = servers[i]?.outro as Intro;
@@ -583,7 +590,8 @@ class AnimeKai extends AnimeParser {
   override fetchEpisodeServers = async (
     episodeId: string,
     subOrDub: SubOrSub = SubOrSub.SUB,
-    customTokenGenerator?: (n: string) => string
+    customTokenGenerator?: (n: string) => string,
+    customIframeDecoder?: (n: string) => string
   ): Promise<IEpisodeServer[]> => {
     if (!episodeId.startsWith(this.baseUrl + '/ajax'))
       episodeId = `${this.baseUrl}/ajax/links/list?token=${episodeId.split('$token=')[1]}&_=${
@@ -601,7 +609,7 @@ class AnimeKai extends AnimeParser {
             `${this.baseUrl}/ajax/links/view?id=${id}&_=${customTokenGenerator?.(id!) ?? GenerateToken(id!)}`,
             { headers: this.Headers() }
           );
-          const decodedData = JSON.parse(DecodeIframeData(data.result));
+          const decodedData = JSON.parse(customIframeDecoder?.(data.result) ?? DecodeIframeData(data.result));
           servers.push({
             name: `MegaUp ${$(server).text().trim()}`!, //megaup is the only server for now
             url: decodedData.url,

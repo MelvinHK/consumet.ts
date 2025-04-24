@@ -145,7 +145,7 @@ class AnimeKai extends models_1.AnimeParser {
          * @param server server type (default `VidCloud`) (optional)
          * @param subOrDub sub or dub (default `SubOrSub.SUB`) (optional)
          */
-        this.fetchEpisodeSources = async (episodeId, server = models_1.StreamingServers.MegaUp, subOrDub = models_1.SubOrSub.SUB, customDecoder, customTokenGenerator) => {
+        this.fetchEpisodeSources = async (episodeId, server = models_1.StreamingServers.MegaUp, subOrDub = models_1.SubOrSub.SUB, customDecoder, customTokenGenerator, customIframeDecoder) => {
             var _a, _b;
             if (episodeId.startsWith('http')) {
                 const serverUrl = new URL(episodeId);
@@ -163,13 +163,13 @@ class AnimeKai extends models_1.AnimeParser {
                 }
             }
             try {
-                const servers = await this.fetchEpisodeServers(episodeId, subOrDub, customTokenGenerator);
+                const servers = await this.fetchEpisodeServers(episodeId, subOrDub, customTokenGenerator, customIframeDecoder);
                 const i = servers.findIndex(s => s.name.toLowerCase().includes(server)); //for now only megaup is available, hence directly using it
                 if (i === -1) {
                     throw new Error(`Server ${server} not found`);
                 }
                 const serverUrl = new URL(servers[i].url);
-                const sources = await this.fetchEpisodeSources(serverUrl.href, server, subOrDub, customDecoder, customTokenGenerator);
+                const sources = await this.fetchEpisodeSources(serverUrl.href, server, subOrDub, customDecoder, customTokenGenerator, customIframeDecoder);
                 sources.intro = (_a = servers[i]) === null || _a === void 0 ? void 0 : _a.intro;
                 sources.outro = (_b = servers[i]) === null || _b === void 0 ? void 0 : _b.outro;
                 return sources;
@@ -259,7 +259,7 @@ class AnimeKai extends models_1.AnimeParser {
          * @param episodeId Episode id
          * @param subOrDub sub or dub (default `sub`) (optional)
          */
-        this.fetchEpisodeServers = async (episodeId, subOrDub = models_1.SubOrSub.SUB, customTokenGenerator) => {
+        this.fetchEpisodeServers = async (episodeId, subOrDub = models_1.SubOrSub.SUB, customTokenGenerator, customIframeDecoder) => {
             var _a;
             if (!episodeId.startsWith(this.baseUrl + '/ajax'))
                 episodeId = `${this.baseUrl}/ajax/links/list?token=${episodeId.split('$token=')[1]}&_=${(_a = customTokenGenerator === null || customTokenGenerator === void 0 ? void 0 : customTokenGenerator(episodeId.split('$token=')[1])) !== null && _a !== void 0 ? _a : GenerateToken(episodeId.split('$token=')[1])}`;
@@ -269,10 +269,10 @@ class AnimeKai extends models_1.AnimeParser {
                 const servers = [];
                 const serverItems = $(`.server-items.lang-group[data-id="${subOrDub}"] .server`);
                 await Promise.all(serverItems.map(async (i, server) => {
-                    var _a;
+                    var _a, _b;
                     const id = $(server).attr('data-lid');
                     const { data } = await this.client.get(`${this.baseUrl}/ajax/links/view?id=${id}&_=${(_a = customTokenGenerator === null || customTokenGenerator === void 0 ? void 0 : customTokenGenerator(id)) !== null && _a !== void 0 ? _a : GenerateToken(id)}`, { headers: this.Headers() });
-                    const decodedData = JSON.parse(DecodeIframeData(data.result));
+                    const decodedData = JSON.parse((_b = customIframeDecoder === null || customIframeDecoder === void 0 ? void 0 : customIframeDecoder(data.result)) !== null && _b !== void 0 ? _b : DecodeIframeData(data.result));
                     servers.push({
                         name: `MegaUp ${$(server).text().trim()}`, //megaup is the only server for now
                         url: decodedData.url,
