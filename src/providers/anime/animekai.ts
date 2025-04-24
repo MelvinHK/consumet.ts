@@ -482,7 +482,13 @@ class AnimeKai extends AnimeParser {
       }
 
       const serverUrl: URL = new URL(servers[i].url);
-      const sources = await this.fetchEpisodeSources(serverUrl.href, server, subOrDub, customDecoder);
+      const sources = await this.fetchEpisodeSources(
+        serverUrl.href,
+        server,
+        subOrDub,
+        customDecoder,
+        customTokenGenerator
+      );
       sources.intro = servers[i]?.intro as Intro;
       sources.outro = servers[i]?.outro as Intro;
       return sources;
